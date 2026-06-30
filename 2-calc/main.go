@@ -95,7 +95,7 @@ func MED(numbers []int) {
 	if len(numbers)%2 == 0 {
 		MED = (float64(numbers[len(numbers)/2-1]) + float64(numbers[len(numbers)/2])) / 2
 	} else {
-		MED = float64((numbers[len(numbers)/2] + 1) / 2)
+		MED = float64(numbers[len(numbers)/2])
 	}
 	fmt.Println(MED)
 }

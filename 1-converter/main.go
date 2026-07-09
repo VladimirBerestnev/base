@@ -10,7 +10,15 @@ import (
 const USDtoEUR = 0.95
 const EURtoUSD = 1.05
 const USDtoRUB = 75
-const RUBtoEUR = 80
+const EURtoRUB = 80
+const RUBtoEUR = 0.0125
+const RUBtoUSD = 0.01333
+
+var currency = map[string]map[string]float64{
+	"EUR": {"USD": EURtoUSD, "RUB": EURtoRUB},
+	"USD": {"EUR": USDtoEUR, "RUB": USDtoRUB},
+	"RUB": {"USD": RUBtoUSD, "EUR": RUBtoEUR},
+}
 
 func main() {
 	userInput()
@@ -37,22 +45,9 @@ func userInput() {
 }
 
 func exchange(money int, userCurrency string, needCurrency string) {
-	var value float64
-	if userCurrency == "USD" && needCurrency == "EUR" {
-		value = float64(money) * USDtoEUR
-	} else if userCurrency == "USD" && needCurrency == "RUB" {
-		value = float64(money) * USDtoRUB
-	} else if userCurrency == "RUB" && needCurrency == "USD" {
-		value = float64(money) / USDtoRUB
-	} else if userCurrency == "RUB" && needCurrency == "EUR" {
-		value = float64(money) * RUBtoEUR
-	} else if userCurrency == "EUR" && needCurrency == "RUB" {
-		value = float64(money) * USDtoRUB / USDtoEUR
-	} else if userCurrency == "EUR" && needCurrency == "USD" {
-		value = float64(money) * EURtoUSD
-	} else {
-		fmt.Println("Неверные данные для расчета")
-	}
+
+	value := float64(money) * currency[userCurrency][needCurrency]
+
 	fmt.Printf("В результате конвертации %d %s Вы получите: %.2f %s\n", money, userCurrency, value, needCurrency)
 }
 

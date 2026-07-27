@@ -33,7 +33,7 @@ func userInput() {
 			fmt.Println(err)
 			getMoney()
 		}
-		exchange(money, userCurrency, needCurrency)
+		exchange(money, userCurrency, needCurrency, &currency)
 
 		fmt.Println("Нужен еще расчет? Y/n")
 		change := ""
@@ -44,9 +44,9 @@ func userInput() {
 	}
 }
 
-func exchange(money int, userCurrency string, needCurrency string) {
+func exchange(money int, userCurrency string, needCurrency string, m *map[string]map[string]float64) {
 
-	value := float64(money) * currency[userCurrency][needCurrency]
+	value := float64(money) * (*m)[userCurrency][needCurrency]
 
 	fmt.Printf("В результате конвертации %d %s Вы получите: %.2f %s\n", money, userCurrency, value, needCurrency)
 }

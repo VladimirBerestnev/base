@@ -18,6 +18,16 @@ func newBin(id string, private bool, name string) *Bin {
 	}
 }
 
+type BinList struct {
+	Bins []Bin
+}
+
+func newBinList() *BinList {
+	return &BinList{
+		Bins: make([]Bin, 5),
+	}
+}
+
 func main() {
-	BinList := []Bin{}
+
 }

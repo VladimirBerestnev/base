@@ -1,20 +1,21 @@
 package file
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 )
 
-func ReadAnyFile(filename string) {
-
-	extension := filepath.Ext(filename)
-	if extension == ".json" {
-		fmt.Println("Файл в формате json")
-	}
+func ReadAnyFile(filename string) ([]byte, error) {
 
 	data, err := os.ReadFile(filename)
 	if err != nil {
-		fmt.Println("Ошибка чтения файла")
+		return nil, err
 	}
+	return data, nil
+
+}
+
+func CheckJsonFile(filename string) bool {
+	extension := filepath.Ext(filename)
+	return extension == ".json"
 }

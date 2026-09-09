@@ -1,7 +1,7 @@
 package storage
 
 import (
-	bin "1-converter/3-bin/bins"
+	bin "3-bin/3-bin/bins"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -11,10 +11,12 @@ func SaveBins(binList bin.BinList, filename string) {
 	data, err := json.Marshal(binList)
 	if err != nil {
 		fmt.Println("Ошибка сериализации json")
+		return
 	}
 	file, errCreate := os.Create(filename)
 	if errCreate != nil {
 		fmt.Println("Ошибка создания файла")
+		return
 	}
 	defer file.Close()
 

@@ -9,7 +9,7 @@ type Bin struct {
 	Name      string    `json:"name"`
 }
 
-func newBin(id string, private bool, name string) *Bin {
+func NewBin(id string, private bool, name string) *Bin {
 	return &Bin{
 		Id:        id,
 		Private:   private,

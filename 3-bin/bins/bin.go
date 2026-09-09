@@ -3,26 +3,26 @@ package bin
 import "time"
 
 type Bin struct {
-	id        string
-	private   bool
-	createdAt time.Time
-	name      string
+	Id        string    `json:"id"`
+	Private   bool      `json:"private"`
+	CreatedAt time.Time `json:"createdat"`
+	Name      string    `json:"name"`
 }
 
 func newBin(id string, private bool, name string) *Bin {
 	return &Bin{
-		id:        id,
-		private:   private,
-		createdAt: time.Now(),
-		name:      name,
+		Id:        id,
+		Private:   private,
+		CreatedAt: time.Now(),
+		Name:      name,
 	}
 }
 
 type BinList struct {
-	Bins []Bin
+	Bins []Bin `json:"bins"`
 }
 
-func newBinList() *BinList {
+func NewBinList() *BinList {
 	return &BinList{
 		Bins: make([]Bin, 0),
 	}

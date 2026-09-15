@@ -1,3 +1,3 @@
-module 3-bin
+module 1-converter
 
 go 1.25.3

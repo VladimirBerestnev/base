@@ -1,11 +1,19 @@
 package main
 
 import (
+	"1-converter/3-bin/api"
+	"1-converter/3-bin/file"
 	"1-converter/3-bin/storage"
 	"fmt"
 )
 
 func main() {
-	binListDb := storage.NewBinListDb(storage.NewJsonDb("data.json"))
-	fmt.Println(binListDb.BinList)
+	filename := "data.json"
+	if file.CheckJsonFile(filename) {
+		binListDb := storage.NewBinListDb(storage.NewJsonDb(filename))
+		fmt.Println(binListDb.BinList)
+	}
+
+	binApiDb := storage.NewBinListDb(api.NewApiDb("http://ya.ru"))
+	fmt.Println(binApiDb.BinList)
 }

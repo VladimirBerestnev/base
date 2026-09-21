@@ -8,6 +8,14 @@ import (
 	"strings"
 )
 
+type MathOps func([]int)
+
+var mathMap = map[int]MathOps{
+	1: AVG,
+	2: SUM,
+	3: MED,
+}
+
 func main() {
 	for {
 		operation, err1 := chooseOperation()
@@ -19,16 +27,8 @@ func main() {
 			break
 		}
 		numbers := enterNumbers()
-		switch operation {
-		case 1:
-			AVG(numbers)
-		case 2:
-			SUM(numbers)
-		case 3:
-			MED(numbers)
-		default:
-			fmt.Println("Что-то пошло не так")
-		}
+		mathMap[operation](numbers)
+
 		fmt.Println("Нужен еще расчет? Y/n")
 		change := ""
 		fmt.Scan(&change)

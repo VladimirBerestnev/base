@@ -10,10 +10,10 @@ import (
 
 type MathOps func([]int)
 
-var mathMap = map[int]MathOps{
-	1: AVG,
-	2: SUM,
-	3: MED,
+var mathMap = map[string]MathOps{
+	"1": AVG,
+	"2": SUM,
+	"3": MED,
 }
 
 func main() {
@@ -23,7 +23,7 @@ func main() {
 			fmt.Println(err1)
 			continue
 		}
-		if operation == 4 {
+		if operation == "4" {
 			break
 		}
 		numbers := enterNumbers()
@@ -38,16 +38,16 @@ func main() {
 	}
 }
 
-func chooseOperation() (int, error) {
-	operation := 0
+func chooseOperation() (string, error) {
+	operation := ""
 	fmt.Println("Выберите операцию с числами: ")
 	fmt.Println("1 - AVG(среднее) ")
 	fmt.Println("2 - SUM(сумма)")
 	fmt.Println("3 - MED(медиана)")
 	fmt.Println("4 - Выход")
 	fmt.Scan(&operation)
-	if operation != 1 && operation != 2 && operation != 3 && operation != 4 {
-		return 0, errors.New("Неверный ввод операции. Повторите ввод")
+	if operation != "1" && operation != "2" && operation != "3" && operation != "4" {
+		return "", errors.New("Неверный ввод операции. Повторите ввод")
 	}
 	return operation, nil
 }

@@ -5,17 +5,14 @@ import (
 	"fmt"
 )
 
-func GetConfig() {
-	config := config.NewConfig()
-	fmt.Println(config.Key)
-}
-
 type ApiDb struct {
 	url string
+	key string
 }
 
-func NewApiDb(url string) *ApiDb {
-	return &ApiDb{url: url}
+func NewApiDb(url string, cfg *config.Config) *ApiDb {
+	return &ApiDb{url: url,
+		key: cfg.Key}
 }
 
 func (db *ApiDb) WriteBins(data string) {

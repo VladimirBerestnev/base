@@ -1,8 +1,14 @@
 package api
 
 import (
+	"1-converter/3-bin/config"
 	"fmt"
 )
+
+func GetConfig() {
+	config := config.NewConfig()
+	fmt.Println(config.Key)
+}
 
 type ApiDb struct {
 	url string

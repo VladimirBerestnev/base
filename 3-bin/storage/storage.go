@@ -13,38 +13,40 @@ type BinList struct {
 
 type BinListDb struct {
 	BinList
-	db Db
+	Db Db
 }
 
 func NewBinListDb(db Db) *BinListDb {
-	file, err := db.ReadBins()
+	file, err := db.ReadBins("")
+	fmt.Println("NewBinListDb:", string(file))
 	if err != nil {
 		return &BinListDb{
 			BinList: BinList{
 				Bins: []bin.Bin{},
 			},
-			db: db,
+			Db: db,
 		}
 	}
 	var list BinList
 	err = json.Unmarshal(file, &list)
+	fmt.Println("After Unmarshal:", list)
 	if err != nil {
 		return &BinListDb{
 			BinList: BinList{
 				Bins: []bin.Bin{},
 			},
-			db: db,
+			Db: db,
 		}
 	}
 	return &BinListDb{
 		BinList: list,
-		db:      db,
+		Db:      db,
 	}
 }
 
 type Db interface {
-	WriteBins(string)
-	ReadBins() ([]byte, error)
+	WriteBins([]byte) string
+	ReadBins(string) ([]byte, error)
 }
 
 type JsonDb struct {
@@ -68,11 +70,11 @@ func (bins *BinListDb) SaveBins() error {
 	if err != nil {
 		return err
 	}
-	bins.db.WriteBins(string(data))
+	bins.Db.WriteBins(data)
 	return nil
 }
 
-func (db *JsonDb) WriteBins(data string) {
+func (db *JsonDb) WriteBins(data []byte) {
 	file, errCreate := os.Create(db.filename)
 	if errCreate != nil {
 		fmt.Println("Ошибка создания файла")
@@ -80,7 +82,7 @@ func (db *JsonDb) WriteBins(data string) {
 	}
 	defer file.Close()
 
-	_, errWrite := file.WriteString(data)
+	_, errWrite := file.WriteString(string(data))
 	if errWrite != nil {
 		fmt.Println("Ошибка записи в файл")
 		return

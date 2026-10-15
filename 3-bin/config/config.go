@@ -23,7 +23,7 @@ func NewConfig() *Config {
 }
 
 func NewConfigTest() *Config {
-	err := godotenv.Load("../env")
+	err := godotenv.Load("../.env")
 	if err != nil {
 		fmt.Println("Не удалось найти .env файл")
 	}

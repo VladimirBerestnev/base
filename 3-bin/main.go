@@ -20,7 +20,7 @@ func ActivateApi() {
 
 	mapFlags := CheckFlag()
 	if mapFlags["create"] == "true" {
-		errCreate := api.CreateByFlag(binApiDb, mapFlags)
+		_, errCreate := api.CreateByFlag(binApiDb, mapFlags)
 		if errCreate != nil {
 			fmt.Println("Ошибка создания записи")
 		}

@@ -8,37 +8,59 @@ import (
 )
 
 func TestCreateByFlag(t *testing.T) {
-	cfg := config.NewConfig()
+	cfg := config.NewConfigTest()
 	binApiDb := storage.NewBinListDb(api.NewApiDb("https://api.jsonbin.io/v3/b", cfg))
-
+	expected := 200
 	flagMap := map[string]string{
-		"file": "my.json",
+		"file": "../my.json",
 		"name": "test",
 	}
-	err := api.CreateByFlag(binApiDb, flagMap)
+	id, err := api.CreateByFlag(binApiDb, flagMap)
 	if err != nil {
 		t.Errorf("Ошибка создания записи")
+	}
+	errDelete := api.DeleteByID(id, *cfg)
+	if errDelete != expected {
+		t.Errorf("Ошибка удаления записи")
 	}
 }
 
 func TestUpdateByID(t *testing.T) {
-	cfg := config.NewConfig()
+	cfg := config.NewConfigTest()
+	binApiDb := storage.NewBinListDb(api.NewApiDb("https://api.jsonbin.io/v3/b", cfg))
 	expected := 200
-
 	flagMap := map[string]string{
-		"file": "my.json",
-		"id":   "6aca2c02ffd5d160535ee4db",
+		"file": "../my.json",
+		"name": "test",
 	}
+	id, err := api.CreateByFlag(binApiDb, flagMap)
+	if err != nil {
+		t.Errorf("Ошибка создания записи")
+	}
+
+	flagMap["id"] = id
 	result := api.UpdateByID(flagMap, *cfg)
 	if result != expected {
 		t.Errorf("Ошибка обновления записи")
 	}
+	errDelete := api.DeleteByID(id, *cfg)
+	if errDelete != expected {
+		t.Errorf("Ошибка удаления записи")
+	}
 }
 
 func TestDeleteByID(t *testing.T) {
-	cfg := config.NewConfig()
+	cfg := config.NewConfigTest()
+	binApiDb := storage.NewBinListDb(api.NewApiDb("https://api.jsonbin.io/v3/b", cfg))
 	expected := 200
-	id := "6aca2c02ffd5d160535ee4db"
+	flagMap := map[string]string{
+		"file": "../my.json",
+		"name": "test",
+	}
+	id, err := api.CreateByFlag(binApiDb, flagMap)
+	if err != nil {
+		t.Errorf("Ошибка создания записи")
+	}
 	result := api.DeleteByID(id, *cfg)
 	if result != expected {
 		t.Errorf("Ошибка удаления записи")

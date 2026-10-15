@@ -133,7 +133,7 @@ func DeleteByID(id string, cfg config.Config) int {
 	list.DeleteList(id)
 	return resp.StatusCode
 }
-func CreateByFlag(binApiDb *storage.BinListDb, mapFlags map[string]string) error {
+func CreateByFlag(binApiDb *storage.BinListDb, mapFlags map[string]string) (string, error) {
 	checkFile := file.CheckJsonFile(mapFlags["file"])
 	if !checkFile {
 		panic("File not .json")
@@ -150,11 +150,11 @@ func CreateByFlag(binApiDb *storage.BinListDb, mapFlags map[string]string) error
 	dataList.NameList = append(dataList.NameList, *NameID)
 	data1, errMarsh := json.Marshal(dataList)
 	if errMarsh != nil {
-		return errors.New("Error Marshal")
+		return "", errors.New("Error Marshal")
 	}
 	errWrite := list.WriteList(data1)
 	if errWrite != nil {
-		return errors.New("Ошибка записи в файл")
+		return "", errors.New("Ошибка записи в файл")
 	}
-	return nil
+	return id, nil
 }

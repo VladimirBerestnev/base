@@ -21,3 +21,14 @@ func NewConfig() *Config {
 		Key: key,
 	}
 }
+
+func NewConfigTest() *Config {
+	err := godotenv.Load("../env")
+	if err != nil {
+		fmt.Println("Не удалось найти .env файл")
+	}
+	key := os.Getenv("KEY")
+	return &Config{
+		Key: key,
+	}
+}

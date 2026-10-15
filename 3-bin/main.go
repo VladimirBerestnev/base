@@ -3,10 +3,8 @@ package main
 import (
 	"1-converter/3-bin/api"
 	"1-converter/3-bin/config"
-	"1-converter/3-bin/file"
 	"1-converter/3-bin/list"
 	"1-converter/3-bin/storage"
-	"encoding/json"
 	"flag"
 	"fmt"
 	"strconv"
@@ -22,16 +20,19 @@ func ActivateApi() {
 
 	mapFlags := CheckFlag()
 	if mapFlags["create"] == "true" {
-		CreateByFlag(binApiDb, mapFlags)
+		errCreate := api.CreateByFlag(binApiDb, mapFlags)
+		if errCreate != nil {
+			fmt.Println("Ошибка создания записи")
+		}
 	}
 	if mapFlags["update"] == "true" {
 		api.UpdateByID(mapFlags, *cfg)
 	}
 	if mapFlags["delete"] == "true" {
-		api.DeleteByID(mapFlags, *cfg)
+		api.DeleteByID(mapFlags["id"], *cfg)
 	}
 	if mapFlags["get"] == "true" {
-		list.GetListByID(binApiDb, mapFlags)
+		list.GetListByID(binApiDb, mapFlags["id"])
 	}
 	if mapFlags["list"] == "true" {
 		Namelist := list.GetList()
@@ -39,28 +40,6 @@ func ActivateApi() {
 			fmt.Println(name)
 		}
 	}
-}
-
-func CreateByFlag(binApiDb *storage.BinListDb, mapFlags map[string]string) {
-	checkFile := file.CheckJsonFile(mapFlags["file"])
-	if !checkFile {
-		panic("File not .json")
-	}
-	fmt.Println(mapFlags["file"])
-	data, err := file.ReadAnyFile(mapFlags["file"])
-	if err != nil {
-		panic("Error read file")
-	}
-	id := binApiDb.Db.WriteBins(data)
-
-	NameID := list.NewName(mapFlags["name"], id)
-	dataList := list.GetList()
-	dataList.NameList = append(dataList.NameList, *NameID)
-	data1, errMarsh := json.Marshal(dataList)
-	if errMarsh != nil {
-		fmt.Println("Error Marshal")
-	}
-	list.WriteList(data1)
 }
 
 func CheckFlag() map[string]string {

@@ -4,6 +4,7 @@ import (
 	"1-converter/3-bin/file"
 	"1-converter/3-bin/storage"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"os"
 	"slices"
@@ -38,17 +39,18 @@ func GetList() NameList {
 	return NameList
 }
 
-func GetListByID(binApiDb *storage.BinListDb, mapFlags map[string]string) {
-	data, errGet := binApiDb.Db.ReadBins(mapFlags["id"])
+func GetListByID(binApiDb *storage.BinListDb, id string) error {
+	data, errGet := binApiDb.Db.ReadBins(id)
 	if errGet != nil {
-		fmt.Println("Read Error")
+		return errors.New("Read Error")
 	}
 	var list storage.BinList
 	err := json.Unmarshal(data, &list)
 	if err != nil {
-		fmt.Println(err)
+		return errors.New("Unmarshal Error")
 	}
 	fmt.Println("Final:", list)
+	return nil
 }
 
 func DeleteList(id string) {
@@ -66,18 +68,17 @@ func DeleteList(id string) {
 
 }
 
-func WriteList(data []byte) {
+func WriteList(data []byte) error {
 	file, errCreate := os.Create("list.json")
 	if errCreate != nil {
-		fmt.Println("Ошибка создания файла")
-		return
+		return errors.New("Ошибка создания файла")
 	}
 	defer file.Close()
 
 	_, errWrite := file.Write(data)
 	if errWrite != nil {
-		fmt.Println("Ошибка записи в файл")
-		return
+		return errors.New("Ошибка записи в файл")
 	}
 	fmt.Println("Запись успешна")
+	return nil
 }

@@ -4,8 +4,10 @@ import (
 	"1-converter/3-bin/config"
 	"1-converter/3-bin/file"
 	"1-converter/3-bin/list"
+	"1-converter/3-bin/storage"
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"net/http"
@@ -41,7 +43,7 @@ func (db *ApiDb) WriteBins(data []byte) string {
 	fmt.Println("Ответ сервера:", string(body))
 	defer resp.Body.Close()
 
-	fmt.Println("Запись успешна")
+	fmt.Println("StatusCode:", resp.StatusCode)
 
 	var responce Response
 	errDecode := json.Unmarshal(body, &responce)
@@ -75,11 +77,15 @@ func (db *ApiDb) ReadBins(id string) ([]byte, error) {
 	}
 
 	defer resp.Body.Close()
-	return body, nil
+	return body, err
 }
 
-func UpdateByID(mapFlags map[string]string, cfg config.Config) {
+func UpdateByID(mapFlags map[string]string, cfg config.Config) int {
 
+	checkFile := file.CheckJsonFile(mapFlags["file"])
+	if !checkFile {
+		panic("File not .json")
+	}
 	baseurl, err := url.Parse("https://api.jsonbin.io/v3/b/" + mapFlags["id"])
 	data, err := file.ReadAnyFile(mapFlags["file"])
 	if err != nil {
@@ -102,11 +108,12 @@ func UpdateByID(mapFlags map[string]string, cfg config.Config) {
 	}
 	fmt.Println("Ответ сервера:", string(body))
 	defer resp.Body.Close()
+	return resp.StatusCode
 }
 
-func DeleteByID(mapFlags map[string]string, cfg config.Config) {
+func DeleteByID(id string, cfg config.Config) int {
 
-	baseurl, err := url.Parse("https://api.jsonbin.io/v3/b/" + mapFlags["id"])
+	baseurl, err := url.Parse("https://api.jsonbin.io/v3/b/" + id)
 
 	req, err := http.NewRequest(http.MethodDelete, baseurl.String(), nil)
 	req.Header.Set("Content-Type", "application/json")
@@ -123,5 +130,31 @@ func DeleteByID(mapFlags map[string]string, cfg config.Config) {
 	}
 	fmt.Println("Ответ сервера:", string(body))
 	defer resp.Body.Close()
-	list.DeleteList(mapFlags["id"])
+	list.DeleteList(id)
+	return resp.StatusCode
+}
+func CreateByFlag(binApiDb *storage.BinListDb, mapFlags map[string]string) error {
+	checkFile := file.CheckJsonFile(mapFlags["file"])
+	if !checkFile {
+		panic("File not .json")
+	}
+	fmt.Println(mapFlags["file"])
+	data, err := file.ReadAnyFile(mapFlags["file"])
+	if err != nil {
+		panic("Error read file")
+	}
+	id := binApiDb.Db.WriteBins(data)
+
+	NameID := list.NewName(mapFlags["name"], id)
+	dataList := list.GetList()
+	dataList.NameList = append(dataList.NameList, *NameID)
+	data1, errMarsh := json.Marshal(dataList)
+	if errMarsh != nil {
+		return errors.New("Error Marshal")
+	}
+	errWrite := list.WriteList(data1)
+	if errWrite != nil {
+		return errors.New("Ошибка записи в файл")
+	}
+	return nil
 }
